@@ -26,7 +26,7 @@ export default function HomeFeedPage() {
       const res = await fetch(backend_url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+          Authorization: `Bearer ${localStorage.getItem("access-token")}`
         }
       });
       let resJson = await res.json();

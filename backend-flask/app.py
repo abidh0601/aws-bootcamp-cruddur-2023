@@ -14,7 +14,16 @@ from services.create_message import *
 from services.show_activity import *
 from services.notifications_activities import *
 
+from lib.cognito_token_verification import CognitoTokenVerification
+
 app = Flask(__name__)
+
+cognitoTokenVerification = CognitoTokenVerification(
+  user_pool_id = os.getenv("AWS_DEFAULT_REGION"),
+  user_pool_client_id = os.getenv("AWS_COGNITO_USER_POOL_ID"),
+  region = os.getenv("AWS_DEFAULT_REGION")
+)
+
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
 origins = [frontend, backend]
@@ -67,6 +76,11 @@ def data_home():
   app.logger.info(
     request.headers.get('Authorization')
   )
+
+  claims = cognitoTokenVerifcation.verify(request.headers)
+  app.logger.debug("claims")
+  app.logger.debug(claims)
+
   data = HomeActivities.run()
   return data, 200
 
