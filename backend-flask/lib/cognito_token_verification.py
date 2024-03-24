@@ -87,7 +87,7 @@ class CognitoTokenVerification:
     @staticmethod
     def _extract_access_token(request_headers):
         access_token = None
-        auth_header = request_headers.get(HTTP_HEADER)
+        auth_header = request_headers.get("Authorization")
         if auth_header and " " in auth_header:
             _, access_token = auth_header.split()
         return access_token
@@ -95,12 +95,13 @@ class CognitoTokenVerification:
     def _check_audience(self, claims):
         # and the Audience  (use claims['client_id'] if verifying an access token)
         audience = claims["aud"] if "aud" in claims else claims["client_id"]
+        print(audience)
         if audience != self.user_pool_client_id:
             raise TokenVerifyError("Token was not issued for this audience")
 
     def verify(self, request_headers, current_time=None):
 
-        token = _extract_access_token(request_headers)
+        token = self._extract_access_token(request_headers)
 
         """ https://github.com/awslabs/aws-support-tools/blob/master/Cognito/decode-verify-jwt/decode-verify-jwt.py """
         if not token:
